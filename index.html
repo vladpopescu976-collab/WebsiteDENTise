@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DENTise Laser Dentistry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <header class="nav">
+        <div class="nav-inner">
+          <div class="brand">
+            <img class="logo" src="assets/dentise-logo.png" alt="DENTise logo" />
+            <div class="brand-text">
+              <div class="brand-name">DENTise Laser Dentistry</div>
+              <div class="brand-meta">Tehnologie laser • Rating 4.9 (57 recenzii)</div>
+            </div>
+          </div>
+          <nav class="nav-links">
+            <a href="#servicii">Servicii</a>
+            <a href="#programari">Programari</a>
+            <a href="#beneficii">Beneficii</a>
+            <a href="#contact">Contact</a>
+          </nav>
+          <div class="nav-actions">
+            <a class="btn btn-gold" href="tel:0757188573">Apeleaza acum</a>
+            <a class="btn btn-ghost" href="https://maps.google.com/?q=DENTise+Laser+Dentistry" target="_blank" rel="noreferrer">
+              Navigare GPS
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <main class="page">
+        <section class="hero">
+          <div class="hero-content">
+            <span class="pill">Laser Dentistry</span>
+            <h1>Tratamente premium, fara durere.</h1>
+            <p>
+              DENTise Laser Dentistry ofera tratamente precise, minim invazive, cu recuperare rapida.
+              Totul intr-un spatiu modern, steril si high-tech.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-gold" href="#programari">Solicita o programare</a>
+              <a class="btn btn-ghost" href="#servicii">Vezi serviciile</a>
+            </div>
+            <div class="hero-info">
+              <div>
+                <span>Program:</span>
+                <strong>Luni - Vineri 09:00 - 17:00</strong>
+              </div>
+              <div>
+                <span>Contact:</span>
+                <strong>0757 188 573</strong>
+              </div>
+            </div>
+          </div>
+          <div class="hero-card">
+            <h3>Profil pacient</h3>
+            <p>Acces rapid la istoricul vizitelor si notificari pentru controlul periodic.</p>
+            <div class="profile-items">
+              <div class="profile-item">Istoric vizite</div>
+              <div class="profile-item">Notificari control</div>
+              <div class="profile-item">Reminder 6 luni</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="servicii" class="section">
+          <div class="section-header">
+            <h2>Servicii recomandate</h2>
+            <p>Fiecare serviciu este personalizat si sustinut de tehnologie laser de ultima generatie.</p>
+          </div>
+          <div class="grid cards">
+            <article v-for="service in services" :key="service.name" class="card">
+              <div class="card-top">
+                <h3>{{ service.name }}</h3>
+                <span class="tag">{{ service.duration }}</span>
+              </div>
+              <p>{{ service.detail }}</p>
+              <div class="tagline">Laser enabled</div>
+            </article>
+          </div>
+        </section>
+
+        <section id="programari" class="section booking">
+          <div class="section-header">
+            <h2>Programari rapide</h2>
+            <p>Alege serviciul, ziua si intervalul orar disponibil intre 09:00 si 17:00.</p>
+          </div>
+          <div class="booking-grid">
+            <form class="booking-card" action="https://formspree.io/f/xqeyaoag" method="POST" @submit.prevent="handleSubmit" novalidate>
+              <input type="hidden" name="_subject" value="Programare noua DENTise" />
+              <input type="hidden" name="source" value="website" />
+              <input type="hidden" name="time" :value="booking.time" />
+              <input class="honey" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <label>
+                Serviciu
+                <select v-model="booking.service" name="service" required>
+                  <option v-for="service in services" :key="service.name" :value="service.name">
+                    {{ service.name }}
+                  </option>
+                </select>
+              </label>
+
+              <label>
+                Data
+                <input type="date" v-model="booking.date" name="date" required />
+              </label>
+
+              <div class="time-block">
+                <div class="time-header">
+                  <span>Interval orar</span>
+                  <small>Luni - Vineri</small>
+                </div>
+                <div class="time-grid">
+                  <button
+                    type="button"
+                    v-for="slot in timeSlots"
+                    :key="slot"
+                    :class="['time-chip', { active: booking.time === slot, disabled: isWeekend }]"
+                    :disabled="isWeekend"
+                    @click="booking.time = slot"
+                  >
+                    {{ slot }}
+                  </button>
+                </div>
+                <p class="hint" v-if="isWeekend">
+                  Selecteaza o zi lucratoare. Sambata si duminica sunt inchise.
+                </p>
+              </div>
+
+              <label>
+                Nume complet
+                <input type="text" v-model.trim="booking.name" name="name" placeholder="Nume si prenume" required />
+              </label>
+
+              <label>
+                Telefon
+                <input type="tel" v-model.trim="booking.phone" name="phone" placeholder="07xx xxx xxx" required />
+              </label>
+
+              <button class="btn btn-gold" type="submit">Trimite cererea</button>
+              <p class="status" v-if="bookingMessage">{{ bookingMessage }}</p>
+            </form>
+
+            <aside class="booking-info">
+              <div class="card">
+                <h3>Ce se intampla dupa?</h3>
+                <p>Confirmam programarea prin telefon si iti trimitem detaliile vizitei.</p>
+              </div>
+              <div class="card">
+                <h3>Acces rapid</h3>
+                <a class="btn btn-ghost" href="tel:0757188573">Apeleaza acum</a>
+                <a class="btn btn-ghost" href="https://maps.google.com/?q=DENTise+Laser+Dentistry" target="_blank" rel="noreferrer">Navigare GPS</a>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="beneficii" class="section">
+          <div class="section-header">
+            <h2>De ce laser?</h2>
+            <p>Beneficii reale pentru confortul si siguranta pacientului.</p>
+          </div>
+          <div class="grid cards">
+            <article v-for="benefit in benefits" :key="benefit.title" class="card">
+              <h3>{{ benefit.title }}</h3>
+              <p>{{ benefit.detail }}</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="contact" class="section">
+          <div class="section-header">
+            <h2>Contact</h2>
+            <p>Suntem aici pentru tine. Programeaza-te rapid sau scrie-ne pe Facebook.</p>
+          </div>
+          <div class="grid contact-grid">
+            <div class="card">
+              <h3>Telefon</h3>
+              <p>0757 188 573</p>
+              <a class="btn btn-gold" href="tel:0757188573">Apeleaza acum</a>
+            </div>
+            <div class="card">
+              <h3>Program</h3>
+              <p>Luni - Vineri: 09:00 - 17:00</p>
+              <p>Sambata - Duminica: Inchis</p>
+            </div>
+            <div class="card">
+              <h3>Social</h3>
+              <p>Facebook: DENTise.stomatologie.laser</p>
+              <a class="btn btn-ghost" href="https://www.facebook.com/DENTise.stomatologie.laser" target="_blank" rel="noreferrer">Deschide Facebook</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>© 2026 DENTise Laser Dentistry</div>
+        <div>Laser • Precizie • Confort</div>
+      </footer>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
